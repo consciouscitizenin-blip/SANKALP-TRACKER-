@@ -1,0 +1,195 @@
+{
+  "entities": {
+    "UserProgress": {
+      "title": "UserProgress",
+      "description": "Stores an SSC CGL aspirant's private syllabus progress, weekly targets, study sessions, and distraction blocker configuration.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner user ID matching request.auth.uid"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Aspirant display name"
+        },
+        "targetExamDate": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 32,
+          "description": "Target SSC CGL exam date ISO string"
+        },
+        "weeklyTargetHours": {
+          "type": "number",
+          "description": "Weekly study target in hours"
+        },
+        "weeklyCompletedHours": {
+          "type": "number",
+          "description": "Hours logged in the current week"
+        },
+        "streakDays": {
+          "type": "number",
+          "description": "Current consecutive daily study streak"
+        },
+        "xpPoints": {
+          "type": "number",
+          "description": "Gamified XP points earned"
+        },
+        "completedTopicsCount": {
+          "type": "number",
+          "description": "Total SSC CGL syllabus topics completed"
+        },
+        "strictLockEnabled": {
+          "type": "boolean",
+          "description": "Whether weekly entertainment app lock is enforced"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last sync"
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "targetExamDate",
+        "weeklyTargetHours",
+        "weeklyCompletedHours",
+        "streakDays",
+        "xpPoints",
+        "completedTopicsCount",
+        "strictLockEnabled",
+        "updatedAt"
+      ]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Publicly readable non-PII peer comparison leaderboard entry for SSC CGL aspirants.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Owner user ID"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Public aspirant handle or name (no email or phone)"
+        },
+        "xpPoints": {
+          "type": "number",
+          "description": "Total XP points"
+        },
+        "streakDays": {
+          "type": "number",
+          "description": "Active daily streak"
+        },
+        "weeklyHours": {
+          "type": "number",
+          "description": "Study hours logged this week"
+        },
+        "syllabusPercent": {
+          "type": "number",
+          "description": "Percentage of SSC CGL syllabus mastered"
+        },
+        "targetTier": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40,
+          "description": "Target post or tier badge"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp"
+        }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "xpPoints",
+        "streakDays",
+        "weeklyHours",
+        "syllabusPercent",
+        "targetTier",
+        "updatedAt"
+      ]
+    },
+    "ForumPost": {
+      "title": "ForumPost",
+      "description": "Peer study group discussion post or doubt resolution thread.",
+      "type": "object",
+      "properties": {
+        "authorUid": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID of the post creator"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Display name of the author"
+        },
+        "groupTag": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 50,
+          "description": "Study group category tag"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 160,
+          "description": "Discussion title or question summary"
+        },
+        "body": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 2000,
+          "description": "Post content or explanation"
+        },
+        "upvotes": {
+          "type": "number",
+          "description": "Number of helpful upvotes"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp"
+        }
+      },
+      "required": [
+        "authorUid",
+        "authorName",
+        "groupTag",
+        "title",
+        "body",
+        "upvotes",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/user_progress/{userId}": {
+      "schema": { "$ref": "#/entities/UserProgress" },
+      "description": "Private user preparation state and weekly target lock settings"
+    },
+    "/leaderboard/{userId}": {
+      "schema": { "$ref": "#/entities/LeaderboardEntry" },
+      "description": "Public non-PII leaderboard rankings for peer comparison"
+    },
+    "/forum_posts/{postId}": {
+      "schema": { "$ref": "#/entities/ForumPost" },
+      "description": "Collaborative SSC CGL study group forum posts"
+    }
+  }
+}

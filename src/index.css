@@ -1,0 +1,184 @@
+@import "tailwindcss";
+
+:root,
+[data-theme="midnight"] {
+  --theme-canvas-bg: #080e1e;
+  --theme-surface-bg: #10192d;
+  --theme-elevated-bg: #192540;
+  --theme-border: #2b3c5e;
+  --theme-border-strong: #3b527e;
+  --theme-text-primary: #f8fafc;
+  --theme-text-secondary: #cbd5e1;
+  --theme-text-muted: #94a3b8;
+  --theme-accent: #f59e0b;
+  --theme-accent-hover: #fbbf24;
+  --theme-accent-text: #fbbf24;
+  --theme-emerald-text: #34d399;
+}
+
+[data-theme="obsidian"] {
+  --theme-canvas-bg: #030305;
+  --theme-surface-bg: #0b0c10;
+  --theme-elevated-bg: #141720;
+  --theme-border: #434c66;
+  --theme-border-strong: #64748b;
+  --theme-text-primary: #ffffff;
+  --theme-text-secondary: #e2e8f0;
+  --theme-text-muted: #cbd5e1;
+  --theme-accent: #facc15;
+  --theme-accent-hover: #fde047;
+  --theme-accent-text: #fde047;
+  --theme-emerald-text: #4ade80;
+}
+
+[data-theme="emerald"] {
+  --theme-canvas-bg: #04130e;
+  --theme-surface-bg: #092018;
+  --theme-elevated-bg: #113025;
+  --theme-border: #1f4e3d;
+  --theme-border-strong: #2d6e57;
+  --theme-text-primary: #f0fdf4;
+  --theme-text-secondary: #d1fae5;
+  --theme-text-muted: #86efac;
+  --theme-accent: #10b981;
+  --theme-accent-hover: #34d399;
+  --theme-accent-text: #34d399;
+  --theme-emerald-text: #6ee7b7;
+}
+
+[data-theme="saffron"] {
+  --theme-canvas-bg: #140906;
+  --theme-surface-bg: #21100b;
+  --theme-elevated-bg: #311912;
+  --theme-border: #542d20;
+  --theme-border-strong: #783f2c;
+  --theme-text-primary: #fff7ed;
+  --theme-text-secondary: #ffedd5;
+  --theme-text-muted: #fdba74;
+  --theme-accent: #f97316;
+  --theme-accent-hover: #fb923c;
+  --theme-accent-text: #fb923c;
+  --theme-emerald-text: #34d399;
+}
+
+[data-theme="amethyst"] {
+  --theme-canvas-bg: #0b0719;
+  --theme-surface-bg: #140e2b;
+  --theme-elevated-bg: #201742;
+  --theme-border: #3b2c70;
+  --theme-border-strong: #543e9e;
+  --theme-text-primary: #f5f3ff;
+  --theme-text-secondary: #e0e7ff;
+  --theme-text-muted: #a5b4fc;
+  --theme-accent: #38bdf8;
+  --theme-accent-hover: #7dd3fc;
+  --theme-accent-text: #38bdf8;
+  --theme-emerald-text: #34d399;
+}
+
+[data-theme="coffee"] {
+  --theme-canvas-bg: #100c08;
+  --theme-surface-bg: #1b150e;
+  --theme-elevated-bg: #281f15;
+  --theme-border: #463727;
+  --theme-border-strong: #634d37;
+  --theme-text-primary: #fafaf9;
+  --theme-text-secondary: #f5f5f4;
+  --theme-text-muted: #d6d3d1;
+  --theme-accent: #fbbf24;
+  --theme-accent-hover: #fcd34d;
+  --theme-accent-text: #fbbf24;
+  --theme-emerald-text: #34d399;
+}
+
+@layer base {
+  body {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+    background-color: var(--theme-canvas-bg);
+    color: var(--theme-text-primary);
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Outfit', 'Noto Sans Devanagari', system-ui, -apple-system, sans-serif;
+  }
+  .font-mono, .tabular-nums {
+    font-family: 'IBM Plex Mono', 'Noto Sans Devanagari', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Mood-adaptive surface, border, and typography tokens across all [data-theme] variants */
+[data-theme] .bg-slate-950 {
+  background-color: var(--theme-canvas-bg) !important;
+}
+
+[data-theme] .bg-slate-900 {
+  background-color: var(--theme-surface-bg) !important;
+}
+
+[data-theme] .bg-slate-800 {
+  background-color: var(--theme-elevated-bg) !important;
+}
+
+[data-theme] .border-slate-800 {
+  border-color: var(--theme-border) !important;
+}
+
+[data-theme] .border-slate-700 {
+  border-color: var(--theme-border-strong) !important;
+}
+
+[data-theme] .text-slate-400 {
+  color: var(--theme-text-secondary) !important;
+}
+
+[data-theme] .text-slate-500 {
+  color: var(--theme-text-muted) !important;
+}
+
+[data-theme="obsidian"] .text-slate-300,
+[data-theme="obsidian"] .text-slate-200 {
+  color: #f1f5f9 !important;
+}
+
+[data-theme] .text-amber-400 {
+  color: var(--theme-accent-text) !important;
+}
+
+[data-theme] .border-amber-400 {
+  border-color: var(--theme-accent) !important;
+}
+
+[data-theme] .bg-amber-500 {
+  background-color: var(--theme-accent) !important;
+  color: #030305 !important;
+}
+
+[data-theme] .text-emerald-400 {
+  color: var(--theme-emerald-text) !important;
+}
+
+/* High-visibility keyboard focus rings for accessibility */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--theme-accent);
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar for desktop command center */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--theme-canvas-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--theme-border-strong);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--theme-accent);
+}

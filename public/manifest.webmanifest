@@ -1,0 +1,31 @@
+{
+  "id": "/",
+  "name": "Sankalp SSC CGL Command Center",
+  "short_name": "SankalpCGL",
+  "description": "Desktop & Offline-Ready SSC CGL Preparation Tracker, Distraction Blocker, and AI Quiz Studio.",
+  "theme_color": "#0F172A",
+  "background_color": "#0F172A",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

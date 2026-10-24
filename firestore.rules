@@ -1,0 +1,206 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Hardened Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint: UserProgress
+    function isValidUserProgress(data) {
+      return data.keys().hasAll([
+        'uid',
+        'displayName',
+        'targetExamDate',
+        'weeklyTargetHours',
+        'weeklyCompletedHours',
+        'streakDays',
+        'xpPoints',
+        'completedTopicsCount',
+        'strictLockEnabled',
+        'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'uid',
+        'displayName',
+        'targetExamDate',
+        'weeklyTargetHours',
+        'weeklyCompletedHours',
+        'streakDays',
+        'xpPoints',
+        'completedTopicsCount',
+        'strictLockEnabled',
+        'updatedAt'
+      ]) &&
+      data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128 && data.uid.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.uid == request.auth.uid &&
+      data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+      data.targetExamDate is string && data.targetExamDate.size() >= 4 && data.targetExamDate.size() <= 32 &&
+      data.weeklyTargetHours is number && data.weeklyTargetHours >= 1 && data.weeklyTargetHours <= 120 &&
+      data.weeklyCompletedHours is number && data.weeklyCompletedHours >= 0 && data.weeklyCompletedHours <= 168 &&
+      data.streakDays is number && data.streakDays >= 0 && data.streakDays <= 3650 &&
+      data.xpPoints is number && data.xpPoints >= 0 && data.xpPoints <= 10000000 &&
+      data.completedTopicsCount is number && data.completedTopicsCount >= 0 && data.completedTopicsCount <= 500 &&
+      data.strictLockEnabled is bool &&
+      data.updatedAt == request.time;
+    }
+
+    // Validation Blueprint: LeaderboardEntry
+    function isValidLeaderboardEntry(data) {
+      return data.keys().hasAll([
+        'uid',
+        'displayName',
+        'xpPoints',
+        'streakDays',
+        'weeklyHours',
+        'syllabusPercent',
+        'targetTier',
+        'updatedAt'
+      ]) &&
+      data.keys().hasOnly([
+        'uid',
+        'displayName',
+        'xpPoints',
+        'streakDays',
+        'weeklyHours',
+        'syllabusPercent',
+        'targetTier',
+        'updatedAt'
+      ]) &&
+      data.uid is string && data.uid.size() >= 1 && data.uid.size() <= 128 && data.uid.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.uid == request.auth.uid &&
+      data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 80 &&
+      data.xpPoints is number && data.xpPoints >= 0 && data.xpPoints <= 10000000 &&
+      data.streakDays is number && data.streakDays >= 0 && data.streakDays <= 3650 &&
+      data.weeklyHours is number && data.weeklyHours >= 0 && data.weeklyHours <= 168 &&
+      data.syllabusPercent is number && data.syllabusPercent >= 0 && data.syllabusPercent <= 100 &&
+      data.targetTier is string && data.targetTier.size() >= 1 && data.targetTier.size() <= 40 &&
+      data.updatedAt == request.time;
+    }
+
+    // Validation Blueprint: ForumPost
+    function isValidForumPost(data) {
+      return data.keys().hasAll([
+        'authorUid',
+        'authorName',
+        'groupTag',
+        'title',
+        'body',
+        'upvotes',
+        'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'authorUid',
+        'authorName',
+        'groupTag',
+        'title',
+        'body',
+        'upvotes',
+        'createdAt'
+      ]) &&
+      data.authorUid is string && data.authorUid.size() >= 1 && data.authorUid.size() <= 128 && data.authorUid.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80 &&
+      data.groupTag is string && data.groupTag.size() >= 1 && data.groupTag.size() <= 50 &&
+      data.title is string && data.title.size() >= 3 && data.title.size() <= 160 &&
+      data.body is string && data.body.size() >= 3 && data.body.size() <= 2000 &&
+      data.upvotes is number && data.upvotes >= 0 && data.upvotes <= 1000000 &&
+      data.createdAt is timestamp;
+    }
+
+    // 1. Private User Preparation Progress
+    match /user_progress/{userId} {
+      allow get: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
+      allow list: if isVerifiedUser() && resource.data.uid == request.auth.uid;
+      allow create: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && isValidUserProgress(incoming());
+      allow update: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && isValidUserProgress(incoming()) && (
+        incoming().uid == existing().uid &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName',
+          'targetExamDate',
+          'weeklyTargetHours',
+          'weeklyCompletedHours',
+          'streakDays',
+          'xpPoints',
+          'completedTopicsCount',
+          'strictLockEnabled',
+          'updatedAt'
+        ])
+      );
+      allow delete: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
+    }
+
+    // 2. Public Non-PII Peer Leaderboard
+    match /leaderboard/{userId} {
+      allow get: if isSignedIn() && isValidId(userId) && resource.data.xpPoints >= 0;
+      allow list: if isSignedIn() && resource.data.xpPoints >= 0;
+      allow create: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && isValidLeaderboardEntry(incoming());
+      allow update: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId && isValidLeaderboardEntry(incoming()) && (
+        incoming().uid == existing().uid &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName',
+          'xpPoints',
+          'streakDays',
+          'weeklyHours',
+          'syllabusPercent',
+          'targetTier',
+          'updatedAt'
+        ])
+      );
+      allow delete: if isVerifiedUser() && isValidId(userId) && request.auth.uid == userId;
+    }
+
+    // 3. Collaborative SSC CGL Study Group Forum Posts
+    match /forum_posts/{postId} {
+      allow get: if isSignedIn() && isValidId(postId) && resource.data.upvotes >= 0;
+      allow list: if isSignedIn() && resource.data.upvotes >= 0;
+      allow create: if isVerifiedUser() && isValidId(postId) && isValidForumPost(incoming()) &&
+        incoming().authorUid == request.auth.uid &&
+        incoming().upvotes == 0 &&
+        incoming().createdAt == request.time;
+      allow update: if isVerifiedUser() && isValidId(postId) && isValidForumPost(incoming()) && (
+        // Action 1: Author edits post content
+        (
+          existing().authorUid == request.auth.uid &&
+          incoming().authorUid == existing().authorUid &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().upvotes == existing().upvotes &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['title', 'body', 'groupTag'])
+        ) ||
+        // Action 2: Peer upvotes helpful post by +1
+        (
+          incoming().authorUid == existing().authorUid &&
+          incoming().authorName == existing().authorName &&
+          incoming().groupTag == existing().groupTag &&
+          incoming().title == existing().title &&
+          incoming().body == existing().body &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().upvotes == existing().upvotes + 1 &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['upvotes'])
+        )
+      );
+      allow delete: if isVerifiedUser() && isValidId(postId) && existing().authorUid == request.auth.uid;
+    }
+  }
+}

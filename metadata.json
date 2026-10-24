@@ -1,0 +1,6 @@
+{
+  "name": "Sankalp SSC CGL Command Center",
+  "description": "Comprehensive SSC CGL preparation and study command center with syllabus mastery tracking, Pomodoro & strict distraction blocker, weekly target lock, AI quiz generator, regional language translation, Google Calendar sync, offline PWA access, and peer leaderboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
